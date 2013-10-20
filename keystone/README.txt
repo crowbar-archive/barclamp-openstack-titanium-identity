@@ -9,7 +9,7 @@ A Barclamp is a module component that implements functionality for Crowbar.  Cor
 
 * This functonality of this barclamp DOES NOT stand alone, the Crowbar Framework is required * 
 
-About this Barclamp-swift
+About this Barclamp-Keystone
 -------------------------------------
 
 Information for this barclamp is maintained on the Crowbar Framework Wiki: https://github.com/dellcloudedge/crowbar/wiki
