@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS <%= @keystone_db_name %>;
+GRANT ALL ON <%= @keystone_db_name %>.* TO '<%= @keystone_db_user %>'@'%' IDENTIFIED BY '<%= @keystone_db_user_pwd %>';
+GRANT ALL ON <%= @keystone_db_name %>.* TO '<%= @keystone_db_user %>'@'localhost' IDENTIFIED BY '<%= @keystone_db_user_pwd %>';
+FLUSH PRIVILEGES;

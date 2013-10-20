@@ -1,0 +1,58 @@
+# Copyright 2011, Dell, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Author: Andi Abes
+#
+
+barclamp:
+  name: keystone
+  display: Keystone
+  description: 'OpenStack centralized authentication and authorization service For High-availability'
+  version: 0
+  requires:
+    - database
+  member:
+    - haopenstack
+
+crowbar:
+  layout: 1
+  order: 75
+  run_order: 75
+  chef_order: 75
+
+locale_additions:
+  en:
+    barclamp:
+      keystone:
+        edit_deployment: 
+          deployment: Deployment
+        edit_attributes: 
+          attributes: Attributes
+          frontend: Frontend
+#          database_engine: Database Engine
+#          database_instance: Database Instance
+          token_format: Algorithm for Token Generation
+          default-tenant: Default Tenant
+          admin-username: Administrator Username
+          admin-password: Administrator Password
+          default-username: Regular User Username
+          default-password: Regular User Password
+
+debs:
+  pkgs:
+    - keystone
+    - python-keystone
+    - python-mysqldb
+    - apache2
+    - libapache2-mod-wsgi

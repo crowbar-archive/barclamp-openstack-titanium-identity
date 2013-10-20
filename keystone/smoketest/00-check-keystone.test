@@ -1,0 +1,21 @@
+#!/bin/bash
+keystone_nodes="$(knife_node_find 'roles:keystone-server' FQDN)"
+
+[[ $keystone_nodes ]] || {
+    echo "Could not find nodes with the keystone-server role!"
+    exit 1
+}
+unset http_proxy
+
+for node in $keystone_nodes; do
+    token=$(curl -sS -d \
+        $'{"auth":{"passwordCredentials":{"username":"admin","password":"crowbar"}}}' \
+        -L -H 'Content-Type: application/json' \
+        "http://$node:5000/v2.0/tokens")
+    [[ $token =~ serviceCatalog ]] || {
+        echo "Did not get valid response from keystone @ $node!"
+        exit 1
+    }
+    echo "$token" > "$LOGDIR/keystone-token.json"
+    echo "Able to authenticate admin:crowbar on Keystone at $node."
+done
