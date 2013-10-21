@@ -5,7 +5,6 @@ description      "Openstack Keystone server deployment recipes."
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
 version          "1.0"
 
-depends "oscommon"
 depends "openssl"
 #depends "database"
 #depends "nagios"
