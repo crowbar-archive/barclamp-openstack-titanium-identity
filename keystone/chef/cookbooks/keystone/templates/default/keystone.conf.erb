@@ -71,11 +71,11 @@ driver = keystone.identity.backends.sql.Identity
 driver = keystone.catalog.backends.sql.Catalog
 
 [token]
-<% if @frontend=='apache' -%>
+# Now all will use sql due to cluster (LB)<% if @frontend=='apache' -%>
 driver = keystone.token.backends.sql.Token
-<% elsif @frontend=='native' -%>
-driver = keystone.token.backends.kvs.Token
-<% end -%>
+#<% elsif @frontend=='native' -%>
+#driver = keystone.token.backends.kvs.Token
+#<% end -%>
 
 [policy]
 driver = keystone.policy.backends.sql.Policy
