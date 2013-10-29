@@ -21,7 +21,7 @@ barclamp:
   description: 'OpenStack centralized authentication and authorization service For High-availability'
   version: 0
   requires:
-    - database
+    - percona
   member:
     - haopenstack
 
