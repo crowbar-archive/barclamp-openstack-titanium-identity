@@ -1,4 +1,4 @@
-[DEFAULT]
+#[DEFAULT]
 # Show more verbose log output (sets INFO log level output)
 #verbose = <%= @verbose ? "True" : "False" %>
 verbose = true
@@ -71,11 +71,7 @@ driver = keystone.identity.backends.sql.Identity
 driver = keystone.catalog.backends.sql.Catalog
 
 [token]
-# Now all will use sql due to cluster (LB)<% if @frontend=='apache' -%>
 driver = keystone.token.backends.sql.Token
-#<% elsif @frontend=='native' -%>
-#driver = keystone.token.backends.kvs.Token
-#<% end -%>
 
 [policy]
 driver = keystone.policy.backends.sql.Policy
