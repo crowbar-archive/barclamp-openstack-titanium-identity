@@ -203,8 +203,7 @@ template "/etc/keystone/keystone.conf" do
       :api_port => node[:keystone][:api][:api_port], # public port
       :api_host => node[:keystone][:api][:api_host],
       :use_syslog => node[:keystone][:use_syslog],
-      :token_format => node[:keystone][:token_format],
-      :frontend => node[:keystone][:frontend]
+      :token_format => node[:keystone][:token_format]
     )
     if node[:keystone][:frontend]=='native'
       notifies :restart, resources(:service => "keystone"), :immediately
