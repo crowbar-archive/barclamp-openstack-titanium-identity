@@ -92,5 +92,13 @@ class KeystoneService < ServiceObject
 
     base
   end
+  
+  def apply_role_pre_chef_call(old_role, role, all_nodes)
+
+    role.default_attributes[:keystone][:db_user_password] = random_password
+    role.save
+	
+  end
+  
 end
 
