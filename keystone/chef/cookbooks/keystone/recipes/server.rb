@@ -155,16 +155,14 @@ keystonecontarray = keystone_db["deployment"]["keystone"]["elements"]["keystone-
 keystonecont1 = keystonecontarray.split('.')
 
 # create keystone db & user, and grant privileges
-#::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
-#node.set_unless['keystone']['db']['password'] = secure_password
-node['keystone']['db']['password'] = server_root_password
+keystone_db_password = node["keystone"]["db_user_password"]
 template "/tmp/keystone_grants.sql" do
   source "keystone_grants.sql.erb"
   mode 0600
   variables(
     :keystone_db_name => node[:keystone][:db][:database],
     :keystone_db_user => node[:keystone][:db][:user],
-    :keystone_db_user_pwd => node[:keystone][:db][:password]
+    :keystone_db_user_pwd => keystone_db_password
   )
 end
 # execute access grants
@@ -178,7 +176,7 @@ end
 # construct sql connection string
 sql_address = admin_vip
 url_scheme = "mysql"
-sql_connection = "#{url_scheme}://#{node[:keystone][:db][:user]}:#{node[:keystone][:db][:password]}@#{sql_address}/#{node[:keystone][:db][:database]}"
+sql_connection = "#{url_scheme}://#{node[:keystone][:db][:user]}:#{keystone_db_password}@#{sql_address}/#{node[:keystone][:db][:database]}"
 
 #service_api_host = admin_vip
 #admin_api_host = admin_vip
