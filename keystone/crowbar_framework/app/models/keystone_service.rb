@@ -94,6 +94,8 @@ class KeystoneService < ServiceObject
   end
   
   def apply_role_pre_chef_call(old_role, role, all_nodes)
+    # Don't take any action if all_nodes are null
+    return if all_nodes.empty?
 
     role.default_attributes[:keystone][:db_user_password] = random_password
     role.save
