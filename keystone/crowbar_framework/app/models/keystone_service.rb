@@ -26,70 +26,59 @@ class KeystoneService < ServiceObject
 
   def proposal_dependencies(role)
     answer = []
-    if role.default_attributes[@bc_name]["percona"] == "percona"
-      answer << { "barclamp" => "percona", "inst" => role.default_attributes["keystone"]["database_instance"] }
-    end
-    if role.default_attributes[@bc_name]["use_gitrepo"]
-      answer << { "barclamp" => "git", "inst" => role.default_attributes[@bc_name]["git_instance"] }
-    end
+    answer << { "barclamp" => "haproxy", "inst" => role.default_attributes[@bc_name]["haproxy_instance"] }
+    answer << { "barclamp" => "percona", "inst" => role.default_attributes[@bc_name]["percona_instance"] }
     answer
   end
 
   def create_proposal
+    @logger.debug("keystone create_proposal: entering")
     base = super
+    @logger.debug("keystone create_proposal: leaving base part")
 
-    nodes = NodeObject.all
-    nodes.delete_if { |n| n.nil? or n.admin? }
+    # HAProxy dependency
+    base["attributes"][@bc_name]["haproxy_instance"] = ""
+    begin
+      haproxyService = HaproxyService.new(@logger)
+      haproxys = haproxyService.list_active[1]
+      if haproxys.empty?
+        # No actives, look for proposals
+        haproxys = haproxyService.proposals[1]
+      end
+      base["attributes"][@bc_name]["haproxy_instance"] = haproxys[0] unless haproxys.empty?
+    rescue
+      @logger.info("keystone create_proposal: no haproxy found")
+    end
+    if base["attributes"][@bc_name]["haproxy_instance"] == ""
+      raise(I18n.t('model.service.dependency_missing', :name => @bc_name, :dependson => "haproxy"))
+    end
 
-#    base["attributes"]["keystone"]["database_instance"] = ""
-#    begin
-#      perconaService = perconaService.new(@logger)
-#      # Look for active roles
-#      dbs = perconaService.list_active[1]
-#      if dbs.empty?
-#        # No actives, look for proposals
-#        dbs = perconaService.proposals[1]
-#      end
-#      if dbs.empty?
-#        @logger.info("Keystone create_proposal: no percona proposal found")
-#        base["attributes"]["keystone"]["database_instance"] = ""
-#      else
-#        base["attributes"]["keystone"]["database_instance"] = dbs[0]
-#        base["attributes"]["keystone"]["database_engine"] = "percona"
-#        @logger.info("Keystone create_proposal: using database proposal: '#{dbs[0]}'")
-#      end
-#    rescue
-#      @logger.info("Keystone create_proposal: no percona proposal found")
-#      base["attributes"]["keystone"]["database_engine"] = ""
-#    end
+    # Percona dependency
+    base["attributes"][@bc_name]["percona_instance"] = ""
+    begin
+      perconaService = PerconaService.new(@logger)
+      perconas = perconaService.list_active[1]
+      if perconas.empty?
+        # No actives, look for proposals
+        perconas = perconaService.proposals[1]
+      end
+      base["attributes"][@bc_name]["percona_instance"] = perconas[0] unless perconas.empty?
+    rescue
+      @logger.info("keystone create_proposal: no percona found")
+    end
+    if base["attributes"][@bc_name]["percona_instance"] == ""
+      raise(I18n.t('model.service.dependency_missing', :name => @bc_name, :dependson => "percona"))
+    end
 
-    # SQLite is not a fallback solution
-    # base["attributes"]["keystone"]["database_engine"] = "sqlite" if base["attributes"]["keystone"]["database_engine"] == ""
-#    if base["attributes"]["keystone"]["database_engine"] == ""
-#      raise(I18n.t('model.service.dependency_missing', :name => @bc_name, :dependson => "percona"))
-#    end
-    
-#    base["attributes"][@bc_name]["git_instance"] = ""
-#    begin
-#      gitService = GitService.new(@logger)
-#      gits = gitService.list_active[1]
-#      if gits.empty?
-#        # No actives, look for proposals
-#        gits = gitService.proposals[1]
-#      end
-#      unless gits.empty?
-#        base["attributes"][@bc_name]["git_instance"] = gits[0]
-#      end
-#    rescue
-#      @logger.info("#{@bc_name} create_proposal: no git found")
-#    end
-
-    base["deployment"]["keystone"]["elements"] = {
-        "keystone-server" => [ nodes.first[:fqdn] ]
-    } unless nodes.nil? or nodes.length ==0
+#    nodes = NodeObject.all
+#    nodes.delete_if { |n| n.nil? or n.admin? }
+#    base["deployment"]["keystone"]["elements"] = {
+#        "keystone-server" => [ nodes.first[:fqdn] ]
+#    } unless nodes.nil? or nodes.length ==0
 
     base[:attributes][:keystone][:service][:token] = '%012d' % rand(1e12)
 
+    @logger.debug("keystone create_proposal: exiting")
     base
   end
   
@@ -99,8 +88,7 @@ class KeystoneService < ServiceObject
 
     role.default_attributes[:keystone][:db_user_password] = random_password
     role.save
-	
-  end
-  
+
+  end  
 end
 

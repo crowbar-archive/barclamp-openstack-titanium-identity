@@ -1,8 +1,10 @@
 {
   "id": "bc-template-keystone",
-  "description": "Centralized authentication and authorization service for OpenStack",
+  "description": "OpenStack HA - centralized authentication and authorization service",
   "attributes": {
     "keystone": {
+      "haproxy_instance": "",
+      "percona_instance": "",
       "debug": false,
       "frontend": "apache",
       "verbose": false,
