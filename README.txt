@@ -18,7 +18,7 @@ This is based on OpenStack.org distribution
 
 This barclamp is designed to be used in conjunction with the OpenStack High-Availability barclamps please review the https://github.com/crowbar/barclamp-openstack-titanium-loadbalancer for deployment information.
 
-This barclamp is designed to be used with 3 controller nodes.
+This barclamp should be applued to  3 controller nodes.
 
 
 Legals
